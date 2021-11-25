@@ -4,13 +4,8 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,15 +19,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   
-  NetworkTableInstance photon = NetworkTableInstance.create();
-
-  public static NetworkTableEntry angle;
-  public static NetworkTableEntry validAngle;
-  public static NetworkTableInstance inst;
-
-  NetworkTable table = photon.getTable("photonvision").getSubTable("LifeCam");
-  PhotonCamera camera = new PhotonCamera("LifeCam");
-  
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   public static SendableChooser<Integer> autoChooser = new SendableChooser<>();
@@ -45,8 +31,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    angle = table.getEntry("targetYaw");
-    validAngle = table.getEntry("hasTarget");
     m_robotContainer = new RobotContainer();
     autoChooser.setDefaultOption("Default Auto", 0);
 
@@ -72,6 +56,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    m_robotContainer.m_led.led.turnOn();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -126,12 +111,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
-  
-  public static double getVisionYawAngle() {
-    return angle.getDouble(0);
-  }
 
-  public static boolean isValidAngle() {
-    return validAngle.getBoolean(false);
-  }
 }

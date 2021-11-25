@@ -10,20 +10,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.commands.ArmIntake.ArmIntakeCommand;
 import frc.robot.commands.ArmIntake.IntakeGroupCommand;
-import frc.robot.commands.Auto.Auto6Balls;
-import frc.robot.commands.Auto.AutoManuallyCommand;
-//import frc.robot.commands.Auto.AutoCommand;
-//import frc.robot.commands.Auto.AutoManuallyCommand;
-//import frc.robot.commands.Auto.DefaultAuto;
+//import frc.robot.commands.Auto.Auto6Balls;
+import frc.robot.commands.Auto.Autonomous;
+import frc.robot.commands.Auto.Default.AutoManuallyCommand;
 import frc.robot.commands.Climb.ClimbCommand;
 import frc.robot.commands.Drive.DriveCommand;
 import frc.robot.commands.Push.PushCommand;
 import frc.robot.commands.Shooter.ShooterCommand;
 import frc.robot.commands.Trigger.TriggerCommand;
-import frc.robot.commands.Turret.AutoAlign;
+import frc.robot.commands.Turret.TurretControllCommand;
 import frc.robot.commands.Turret.TurretGroupCommand;
-import frc.robot.commands.Turret.TurretNewPIDCommand;
-import frc.robot.commands.Turret.TurretPIDCommand;
 import frc.robot.subsystems.ArmIntakeSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -32,12 +28,11 @@ import frc.robot.subsystems.PushSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TriggerSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
-import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-//import edu.wpi.first.wpiutil.net.PortForwarder;
+import edu.wpi.first.wpiutil.net.PortForwarder;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -58,21 +53,20 @@ public class RobotContainer {
   public final TriggerSubsystem m_trigger = new TriggerSubsystem();
   public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   public final ClimbSubsystem m_climb = new ClimbSubsystem();
-  public final Vision m_vision = new Vision();
-  public final VisionSubsystem m_visions = new VisionSubsystem();
+  public final VisionSubsystem m_vision = new VisionSubsystem();
   public final LedSubsystem m_led = new LedSubsystem();
 
 
-  AutoAlign autoAlign = new AutoAlign( m_turret, m_led);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    //PortForwarder.add(5800, "photonvision.local", 5800);
+    PortForwarder.add(5800, "photonvision.local", 5800);
     
     configureButtonBindings();
 
-    m_robotDrive.setDefaultCommand(new DriveCommand(m_robotDrive,() -> -m_driverController.getRawAxis(1)* 0.8,() -> -m_driverController.getRawAxis(4)* -0.8));
+    //m_robotDrive.setDefaultCommand(new DriveCommand(m_robotDrive,() -> -m_driverController.getRawAxis(1)* 0.8,() -> -m_driverController.getRawAxis(4)* -0.8));
+    m_robotDrive.setDefaultCommand(new DriveCommand(m_robotDrive,() -> -m_driverController.getRawAxis(1),() -> -m_driverController.getRawAxis(4)));
   }
 
   /**
@@ -106,18 +100,16 @@ public class RobotContainer {
     new JoystickButton(m_operatorController, 5).whileHeld(new TriggerCommand(m_trigger, 0.4));
 
     // Kafa Dönme Auto
-    new JoystickButton(m_driverController, 1).whileHeld(new AutoAlign(m_turret,m_led));
     
-    new JoystickButton(m_driverController, 3).whileHeld(new TurretNewPIDCommand(m_turret, m_visions, m_led));
 
-    new JoystickButton(m_driverController, 2).whileHeld(new TurretPIDCommand(m_turret, m_led));
+    new JoystickButton(m_driverController, 2).whileHeld(new TurretControllCommand(m_turret, m_vision));
 
     // Kafa Dönme Manuel 
     new POVButton(m_driverController, 270).whileHeld(new TurretGroupCommand(m_turret,0.25));
     new POVButton(m_driverController, 90).whileHeld(new TurretGroupCommand(m_turret,-0.25));
 
     // Top Fırlatma Auto
-    new JoystickButton(m_operatorController, 11).whileHeld(new AutoManuallyCommand(m_shooter, m_trigger, m_push) );
+    new JoystickButton(m_operatorController, 11).whileHeld(new AutoManuallyCommand(m_shooter, m_trigger, m_push, m_turret, m_vision));
 
     // Top Fırlatma Manuel
     new JoystickButton(m_operatorController, 12).whileHeld(new ShooterCommand(m_shooter,-1));
@@ -141,6 +133,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     //return new AutoCommand(m_robotDrive, m_shooter, m_trigger, m_push);
-    return new Auto6Balls(m_robotDrive, m_visions, m_intake, m_turret, m_shooter, m_trigger, m_push, m_led);
+    //return new Auto6Balls(m_robotDrive,m_vision, m_intake, m_turret, m_shooter, m_trigger, m_push, m_led);
+    return new Autonomous(m_turret, m_vision, m_shooter, m_trigger, m_push, m_robotDrive, m_intake);
   }
 }

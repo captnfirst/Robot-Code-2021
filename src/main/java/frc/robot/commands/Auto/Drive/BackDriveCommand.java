@@ -2,15 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto.Drive;
+
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class ForwardDriveCommand extends CommandBase {
-  /** Creates a new ForwardDriveCommand. */
+public class BackDriveCommand extends CommandBase {
+  /** Creates a new BackDriveCommand. */
   DriveSubsystem m_drive;
-  public ForwardDriveCommand(DriveSubsystem drive) {
+  public BackDriveCommand(DriveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.m_drive = drive;
     addRequirements(m_drive);
@@ -23,7 +24,7 @@ public class ForwardDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.TankDrive(0.5, 0.5);
+    m_drive.TankDrive(-0.5, -0.5);
   }
 
   // Called once the command ends or is interrupted.

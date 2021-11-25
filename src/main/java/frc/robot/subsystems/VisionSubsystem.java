@@ -5,60 +5,51 @@
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.wpilibj.util.Units;
+import org.photonvision.PhotonPipelineResult;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase {
-  /** Creates a new VisionSubsystem. */
-  
-  // Change this to match the name of your camera
+  /** Creates a new Vision. */
   PhotonCamera camera;
   PhotonPipelineResult result;
-  PhotonTrackedTarget target;
-  // Constants such as camera and target height stored. Change per robot and goal!
-  final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
-  final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
-
-  // Angle between horizontal and the camera.
-  final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);  
+  NetworkTableEntry yawResult;
+  NetworkTableInstance NTmain;
+  NetworkTable nt;
   
   public VisionSubsystem() {
-    camera = new PhotonCamera("photonvision");
+    this.camera = new PhotonCamera("compcam");
+    this.NTmain = NetworkTableInstance.getDefault();
+    this.nt = NTmain.getTable("photonvision").getSubTable("compcam");
   }
 
-  public PhotonPipelineResult getLatestResult(){
-    var result = camera.getLatestResult();
-    return result;
+  /*
+  public double getYaw(){
+    if(result.hasTargets()){
+      return result.getBestTarget().getYaw();
+    }
+    else return 0.0;
   }
-
-  public PhotonTrackedTarget getBestTarget(){
-    var target = result.getBestTarget();
-    return target;
-  }
-
-  public void setDriverMode(){
-    camera.setDriverMode(true);
-  } 
-
-  public void setVisionMode(){
-    camera.setPipelineIndex(2);
-  }
-
-  public boolean hasTargets(){
-    boolean hasTargets = result.hasTargets();
-    return hasTargets;
-  }
+  */
 
   public double getYaw(){
-    double yaw = target.getYaw();
-    return yaw;
+    return nt.getEntry("targetYaw").getDouble(Double.NaN);
+  }
+
+  public boolean hasTarget(){
+    // ! FIXME
+    return nt.getEntry("hasTarget").getBoolean(false);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    result = camera.getLatestResult();
+    SmartDashboard.putNumber("yawSD", getYaw());
   }
 }

@@ -2,13 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto.Default;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Turret.AutoAlign;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.PushSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -24,18 +23,15 @@ public class DefaultManuallyAuto extends SequentialCommandGroup {
 
   public DefaultManuallyAuto(
     //Vision vision,
-    AutoAlign autoAlign, 
     TurretSubsystem turret, 
     ShooterSubsystem shooter,
     TriggerSubsystem trigger,
     PushSubsystem push,
     LedSubsystem led) {
-      new AutoAlign(turret,led);
     
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      autoAlign,
       new RunCommand(()-> shooter.runShooter(-1), shooter).withTimeout(4),
       new ParallelCommandGroup(
         new RunCommand(() -> trigger.runTrigger(-0.4), trigger),

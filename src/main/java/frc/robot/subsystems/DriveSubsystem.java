@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import edu.wpi.first.wpilibj.SPI;
 
 
 
@@ -29,7 +28,7 @@ public class DriveSubsystem extends SubsystemBase {
   public final DifferentialDriveOdometry m_odometry;
 
 
-  Gyro m_gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  Gyro m_gyro = new ADXRS450_Gyro();
   
   double target;
   double error;

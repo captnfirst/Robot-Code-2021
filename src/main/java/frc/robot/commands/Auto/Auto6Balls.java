@@ -8,14 +8,17 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.ArmIntake.IntakeGroupCommand;
+import frc.robot.commands.Auto.Drive.BackAngleCommand;
+import frc.robot.commands.Auto.Drive.BackDriveCommand;
+import frc.robot.commands.Auto.Drive.ForwardAngleCommand;
+import frc.robot.commands.Auto.Drive.ForwardDriveCommand;
 import frc.robot.commands.Shooter.ShooterCommand;
-import frc.robot.commands.Turret.TurretNewPIDCommand;
-//import frc.robot.commands.Turret.TurretPIDCommand;
+import frc.robot.commands.Turret.TurretControllCommand;
 import frc.robot.subsystems.ArmIntakeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.PushSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem; 
 import frc.robot.subsystems.TriggerSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -31,7 +34,7 @@ public class Auto6Balls extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     
     addCommands(
-      new TurretNewPIDCommand(m_turret,m_vision,m_led).withTimeout(1).alongWith(new ShooterCommand(m_shooter, -1)).withTimeout(4),
+      new TurretControllCommand(m_turret,m_vision).withTimeout(1).alongWith(new ShooterCommand(m_shooter, -1)).withTimeout(4),
       // TurretPIDCommand yerine new PID yazdım onu koydum çalışmazsa değiş
       new ParallelCommandGroup(
       new RunCommand(() -> m_trigger.runTrigger(-0.4), m_trigger),
@@ -47,7 +50,7 @@ public class Auto6Balls extends SequentialCommandGroup {
     }.withTimeout(2),
       new BackAngleCommand(m_drivetrain).withTimeout(1), new IntakeGroupCommand(m_intake, m_push).alongWith(new BackDriveCommand(m_drivetrain)).withTimeout(2),
       new ForwardDriveCommand(m_drivetrain).withTimeout(2) ,new ForwardAngleCommand(m_drivetrain).withTimeout(1),
-      new ParallelCommandGroup(new TurretNewPIDCommand(m_turret,m_vision,m_led),
+      new ParallelCommandGroup(new TurretControllCommand(m_turret,m_vision),
     //bunu ekledim yeni olarak eğer çalışmazsa silersin 
       new RunCommand(() -> m_trigger.runTrigger(-0.4), m_trigger),
       new RunCommand(() -> m_push.runPush(-0.4), m_push),
@@ -60,6 +63,7 @@ public class Auto6Balls extends SequentialCommandGroup {
         m_shooter.runShooter(0);
       }
     }.withTimeout(3)
+    
     );
   }
 }

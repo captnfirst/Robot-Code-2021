@@ -59,7 +59,6 @@ public final class Constants {
 
         public static final double kPurePursuitLookAheadDistance = 0.8;
 
-
         public static final double ksVolts = 2.2;
         public static final double kvVoltSecondsPerMeter = 1.98;
         public static final double kaVoltSecondsSquaredPerMeter = 0.414;
@@ -69,11 +68,8 @@ public final class Constants {
         public static final double kMaxAutoVoltage = 7;
 
 
-
-
         public static final double kStraightDriveMaxVolts = 10;
         public static final double kStraightDriveMinVolts = 2;
-
         
 
         public static final double kPathFollowP = 5.0; // 0.1;
